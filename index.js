@@ -13,7 +13,7 @@ app.use(express_1.default.urlencoded({
     extended: true,
 }));
 app.use(express_1.default.json());
-app.get('/', (req, res) => {
+app.get('/h', (req, res) => {
     res.send('ES6 is the Node way to go');
 });
 app.post('/twirp/livekit.RoomService/CreateRoom', (req, res) => {
