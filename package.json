@@ -4,7 +4,8 @@
   "description": "learning center server",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && yarn && yarn run build"
   },
   "repository": {
     "type": "git",
