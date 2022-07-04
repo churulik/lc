@@ -6,24 +6,60 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const livekit_server_sdk_1 = require("livekit-server-sdk");
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
+app.use(express_1.default.urlencoded({
+    extended: true,
+}));
+app.use(express_1.default.json());
 app.get('/', (req, res) => {
-    // if this room doesn't exist, it'll be automatically created when the first
-    // client joins
-    const roomName = 'name-of-room';
-    // identifier to be used for participant.
-    // it's available as LocalParticipant.identity with livekit-client SDK
-    const participantName = 'user-name';
-    const at = new livekit_server_sdk_1.AccessToken('api-key', 'secret-key', {
-        identity: participantName,
-    });
-    at.addGrant({ roomJoin: true, room: roomName });
-    const token = at.toJwt();
-    console.log('access token', token);
-    const livekitHost = 'https://my.livekit.host';
-    const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, 'api-key', 'secret-key');
+    res.send('ES6 is the Node way to go');
+});
+app.post('/twirp/livekit.RoomService/CreateRoom', (req, res) => {
+    res.send('ok');
+});
+const API_KEY = 'APIpwqB8nDT3FsZ';
+const API_SECRET = 'VqfumSn8RQQULQbyweX5K2S0AcKdYVouNr5axTOIvfjA';
+app.get('/test', (req, res) => {
+    const room = '1';
+    const user = 'me';
+    const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
+    at.addGrant({ roomJoin: true, room });
+    // const token = at.toJwt();
+    const livekitHost = 'ws://localhost:7880';
+    const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
     // list rooms
     svc.listRooms().then((rooms) => {
-        console.log('existing rooms', rooms);
+        // console.log('existing rooms', rooms);
+    });
+    // create a new room
+    const opts = {
+        name: 'myroom'
+    };
+    svc.createRoom(opts).then((createdRoom) => {
+        // console.log('room created', room);
+    });
+    // delete a room
+    svc.deleteRoom('myroom').then(() => {
+        // console.log('room deleted');
+    });
+    res.send('ES6 is the Node way to go');
+});
+app.post('/token', (req, res) => {
+    const { room, user } = req.body;
+    if (!room || !user) {
+        res.status(400).send('Enter valid room and user');
+        return;
+    }
+    const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
+    at.addGrant({ roomJoin: true, room });
+    const token = at.toJwt();
+    res.send({ token, url: 'ws://localhost:7880' });
+});
+app.post('/room', () => {
+    const livekitHost = 'http://localhost:5000';
+    const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
+    // list rooms
+    svc.listRooms().then((rooms) => {
+        // console.log('existing rooms', rooms);
     });
     // create a new room
     const opts = {
@@ -33,14 +69,14 @@ app.get('/', (req, res) => {
         maxParticipants: 20,
     };
     svc.createRoom(opts).then((room) => {
-        console.log('room created', room);
+        // console.log('room created', room);
     });
     // delete a room
     svc.deleteRoom('myroom').then(() => {
-        console.log('room deleted');
+        // console.log('room deleted');
     });
-    res.send('ES6 is the Node way to go');
 });
-app.listen(3000, () => {
-    console.log(`App listening on port 3000!`);
+app.listen(5000, () => {
+    // console.log(`App listening on port 5000!`);
 });
+//# sourceMappingURL=index.js.map
