@@ -27,7 +27,7 @@ app.get('/test', (req, res) => {
     const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
     at.addGrant({ roomJoin: true, room });
     // const token = at.toJwt();
-    const livekitHost = 'ws://localhost:7880';
+    const livekitHost = 'wss://demo.livekit.cloud';
     const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
     // list rooms
     svc.listRooms().then((rooms) => {
@@ -55,7 +55,7 @@ app.post('/token', (req, res) => {
     const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
     at.addGrant({ roomJoin: true, room });
     const token = at.toJwt();
-    res.send({ token, url: 'ws://localhost:7880' });
+    res.send({ token, url: 'wss://demo.livekit.cloud' });
 });
 app.post('/room', () => {
     const livekitHost = 'http://localhost:5000';
