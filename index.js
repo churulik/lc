@@ -78,6 +78,6 @@ app.post('/room', () => {
     });
 });
 app.listen(PORT, () => {
-    // console.log(`App listening on port 5000!`);
+    console.log(`App listening on port ${PORT}`);
 });
 //# sourceMappingURL=index.js.map
