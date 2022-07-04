@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/churulik/lc-server-node#readme",
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "livekit-server-sdk": "^1.0.0"
   }
 }
