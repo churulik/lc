@@ -13,8 +13,8 @@ app.use(express_1.default.urlencoded({
     extended: true,
 }));
 app.use(express_1.default.json());
-app.get('/h', (req, res) => {
-    res.send(`${PORT}`);
+app.get('/', (req, res) => {
+    res.send('ES6 is the Node way to go');
 });
 app.post('/twirp/livekit.RoomService/CreateRoom', (req, res) => {
     res.send('ok');
@@ -27,7 +27,7 @@ app.get('/test', (req, res) => {
     const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
     at.addGrant({ roomJoin: true, room });
     // const token = at.toJwt();
-    const livekitHost = 'wss://demo.livekit.cloud';
+    const livekitHost = 'ws://localhost:7880';
     const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
     // list rooms
     svc.listRooms().then((rooms) => {
@@ -55,7 +55,7 @@ app.post('/token', (req, res) => {
     const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
     at.addGrant({ roomJoin: true, room });
     const token = at.toJwt();
-    res.send({ token, url: 'wss://demo.livekit.cloud' });
+    res.send({ token, url: 'ws://localhost:7880' });
 });
 app.post('/room', () => {
     const livekitHost = 'http://localhost:5000';
@@ -80,6 +80,6 @@ app.post('/room', () => {
     });
 });
 app.listen(PORT, () => {
-    // console.log(`App listening on port 5000!`);
+    console.log(`App listening on port ${PORT}!`);
 });
 //# sourceMappingURL=index.js.map

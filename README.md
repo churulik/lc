@@ -1,1 +1,1 @@
-# lc-server
+# lc

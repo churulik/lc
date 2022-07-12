@@ -2,7 +2,7 @@ import {FC, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {AudioRenderer, LiveKitRoom, useParticipant, VideoRenderer} from '@livekit/react-components';
 import {createLocalTracks, Room} from 'livekit-client';
-import {Box, Button, Flex, Grid, HStack, Icon, VStack, Text} from '@chakra-ui/react';
+import {Box, Flex, Grid, HStack, Icon, VStack, Text, IconButton} from '@chakra-ui/react';
 import {Mic, MicOff, Power, Video, VideoOff } from 'react-feather';
 
 const CustomParticipantView = ({participant}: any) => {
@@ -17,49 +17,54 @@ const CustomParticipantView = ({participant}: any) => {
   );
 };
 
-const ControlButton = ({icon, onClick, children}: any) => (
-  <Button onClick={onClick} py="0.5rem" px="1rem">
-    <HStack spacing="0.5rem">
-      <Icon as={icon} w="1rem" h="1rem" color="white"/>
-      <Text
-        textTransform="uppercase"
-        textStyle="v2.caption-mono"
-        color="white"
-        display="unset">{children}</Text>
-    </HStack>
-  </Button>
+const ControlButton = ({ariaLabel, color, icon, onClick}: any) => (
+  <IconButton
+    aria-label={ariaLabel}
+    colorScheme={color || 'blue'}
+    icon={<Icon as={icon} color="white"/>}
+    onClick={onClick}
+    isRound
+    size="lg"
+  />
 );
 
 const ControlsView = ({room}: any) => {
   // const {unpublishTrack} = useParticipant(room.localParticipant);
+  const [mic, setMic] = useState(room.localParticipant.isMicrophoneEnabled);
+  const [cam, setCam] = useState(room.localParticipant.isCameraEnabled);
 
   const onToggleMic = () => {
     const enabled = room.localParticipant.isMicrophoneEnabled;
     room.localParticipant.setMicrophoneEnabled(!enabled);
+    setMic(!enabled)
   };
   const onToggleVideo = () => {
     const enabled = room.localParticipant.isCameraEnabled;
     room.localParticipant.setCameraEnabled(!enabled);
+    setCam(!enabled);
   };
   const onPowerOff = () => {
     room.disconnect();
   };
 
   return (
-    <HStack justify="center" spacing="0.8rem" pt="3.375rem">
+    <HStack justify="center" spacing="20px" py="12px" position="fixed" bottom={0} width="100%" background={'rgba(0,0,0,0.2)'}>
       <ControlButton
-        icon={room.localParticipant.isMicrophoneEnabled ? Mic : MicOff}
-        onClick={onToggleMic}>
-        {room.localParticipant.isMicrophoneEnabled ? 'Mute' : 'Unmute'}
-      </ControlButton>
+        ariaLabel="mic"
+        icon={mic ? Mic : MicOff}
+        onClick={onToggleMic}
+      />
       <ControlButton
-        icon={room.localParticipant.isCameraEnabled ? Video : VideoOff}
-        onClick={onToggleVideo}>
-        {room.localParticipant.isCameraEnabled ? 'Stop Video' : 'Start Video'}
-      </ControlButton>
+        ariaLabel="camera"
+        icon={cam ? Video : VideoOff}
+        onClick={onToggleVideo}
+      />
       <ControlButton
+        ariaLabel="exit"
+        color="red"
         icon={Power}
-        onClick={onPowerOff}>Disconnect</ControlButton>
+        onClick={onPowerOff}
+      />
     </HStack>
   );
 };
@@ -74,7 +79,7 @@ const RoomStatusView = ({children}: any) => (
   </VStack>
 );
 
-function StageView({roomState}: any) {
+const StageView = ({roomState}: any) => {
   const {room, participants, audioTracks, isConnecting, error} = roomState;
   const gridRef = useRef<any>(null);
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
@@ -129,9 +134,9 @@ function StageView({roomState}: any) {
       <ControlsView room={room}/>
     </Flex>
   );
-}
+};
 
-async function handleConnected(room: Room) {
+const handleConnected = async (room: Room) => {
   console.log('connected to room', room)
 
   const tracks = await createLocalTracks({
@@ -141,14 +146,14 @@ async function handleConnected(room: Room) {
   tracks.forEach((track) => {
     room.localParticipant.publishTrack(track, {simulcast: true});
   })
-}
+};
 
 const HomePage: FC = () => {
   const [url, setUrl] = useState<string>();
   const [token, setToken] = useState<string>();
 
   useEffect(() => {
-    axios.post('/token', {user: 'me', room: '1'})
+    axios.post('/token', {user: `me_${Date.now()}`, room: '333444'})
       .then(({data: {token, url}}) => {
         setUrl(url);
         setToken(token);
@@ -164,7 +169,7 @@ const HomePage: FC = () => {
       url={url}
       token={token}
       stageRenderer={StageView}
-      onConnected={(room) => { handleConnected(room) }}
+      onConnected={handleConnected}
     />
   );
 };
