@@ -1,9 +1,9 @@
 services:
   server:
-#    build:
-#      context: ./server
-#      dockerfile: ./Dockerfile
-    image: tushe2000/lc-server
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+#    image: tushe2000/lc-server
     ports:
       - 5000:5000
 #  client:
@@ -18,13 +18,13 @@ services:
 ##      - /app/node_modules
 #    links:
 #      - server
-  livekit:
-    image: livekit/livekit-server:latest
-    command: --config /livekit.yaml --node-ip=127.0.0.1
-    restart: unless-stopped
-    ports:
-      - 7880:7880
-      - 7881:7881
-      - 7882:7882/udp
-    volumes:
-      - ./livekit.yaml:/livekit.yaml
+#  livekit:
+#    image: livekit/livekit-server:latest
+#    command: --config /livekit.yaml --node-ip=127.0.0.1
+#    restart: unless-stopped
+#    ports:
+#      - 7880:7880
+#      - 7881:7881
+#      - 7882:7882/udp
+#    volumes:
+#      - ./livekit.yaml:/livekit.yaml
