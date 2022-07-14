@@ -1,7 +1,7 @@
 FROM node:alpine
 WORKDIR /app
-COPY ["package.json", "package-lock.json", "./"]
-RUN npm install --production
-COPY . .
+COPY ["package.json", "./"]
+RUN yarn install --production
+COPY ./ ./
 EXPOSE 5000
 CMD ["node", "dist/index.js"]
