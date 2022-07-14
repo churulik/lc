@@ -1,23 +1,23 @@
 services:
   server:
-    build:
-      context: ./server
-      dockerfile: ./Dockerfile
-#    image: tushe2000/lc-server
+#    build:
+#      context: ./server
+#      dockerfile: ./Dockerfile
+    image: tushe2000/lc-server
     ports:
       - 5000:5000
   client:
-    build:
-      context: ./client
-      dockerfile: ./Dockerfile
-#    image: tushe2000/lc-client
+#    build:
+#      context: ./client
+#      dockerfile: ./Dockerfile
+    image: tushe2000/lc-client
     ports:
       - 3000:3000
 #    volumes:
 #      - ./client:/app
 #      - /app/node_modules
     links:
-      - server:localhost
+      - server
   livekit:
     image: livekit/livekit-server:latest
     command: --config /livekit.yaml --node-ip=127.0.0.1
