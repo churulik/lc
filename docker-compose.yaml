@@ -3,14 +3,14 @@ services:
     build:
       context: ./server
       dockerfile: ./Dockerfile
-    image: tushe2000/lc-server
+#    image: tushe2000/lc-server
     ports:
       - 5000:5000
   client:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-    image: tushe2000/lc-client
+#    image: tushe2000/lc-client
     ports:
       - 3000:3000
 #    volumes:
