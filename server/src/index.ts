@@ -15,7 +15,7 @@ app.use(
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('ES6 is the Node way to go');
+  res.send('Home');
 });
 
 app.post('/twirp/livekit.RoomService/CreateRoom', (req, res) => {
