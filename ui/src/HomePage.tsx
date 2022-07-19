@@ -153,7 +153,13 @@ const HomePage: FC = () => {
   const [token, setToken] = useState<string>();
 
   useEffect(() => {
-    axios.post('/token', {user: `me_${Date.now()}`, room: '333444'})
+
+
+    // const wss = new WebSocket(`wss://${host}/websocket`);
+    // wss.onopen = () => console.log('wss open');
+    // wss.onclose = () => console.log('wss close');
+
+    axios.post('/api/token', {user: `me_${Date.now()}`, room: '333444'})
       .then(({data: {token, url}}) => {
         setUrl(url);
         setToken(token);
@@ -165,12 +171,20 @@ const HomePage: FC = () => {
   }
 
   return (
-    <LiveKitRoom
-      url={url}
-      token={token}
-      stageRenderer={StageView}
-      onConnected={handleConnected}
-    />
+    <>
+      <button onClick={() => {
+        const host = window.location.host;
+        const ws = new WebSocket(`ws://${host}/websocket`);
+        ws.onopen = () => console.log('ws open');
+        ws.onclose = () => console.log('ws close');
+      }}>WS</button>
+      <LiveKitRoom
+        url={url}
+        token={token}
+        stageRenderer={StageView}
+        onConnected={handleConnected}
+      />
+    </>
   );
 };
 

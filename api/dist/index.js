@@ -5,48 +5,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const livekit_server_sdk_1 = require("livekit-server-sdk");
 const express_1 = __importDefault(require("express"));
-const path_1 = __importDefault(require("path"));
+const express_ws_1 = __importDefault(require("express-ws"));
 const app = (0, express_1.default)();
+const expressWsInstance = (0, express_ws_1.default)(app);
 const PORT = process.env.PORT || 5000;
-app.use(express_1.default.static(path_1.default.resolve(__dirname, './client/build')));
 app.use(express_1.default.urlencoded({
     extended: true,
 }));
 app.use(express_1.default.json());
 app.get('/', (req, res) => {
-    res.send('ES6 is the Node way to go');
-});
-app.post('/twirp/livekit.RoomService/CreateRoom', (req, res) => {
-    res.send('ok');
+    res.send('Welcome');
 });
 const API_KEY = 'APIpwqB8nDT3FsZ';
 const API_SECRET = 'VqfumSn8RQQULQbyweX5K2S0AcKdYVouNr5axTOIvfjA';
-app.get('/test', (req, res) => {
-    const room = '1';
-    const user = 'me';
-    const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
-    at.addGrant({ roomJoin: true, room });
-    // const token = at.toJwt();
-    const livekitHost = 'ws://localhost:7880';
-    const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
-    // list rooms
-    svc.listRooms().then((rooms) => {
-        // console.log('existing rooms', rooms);
-    });
-    // create a new room
-    const opts = {
-        name: 'myroom'
-    };
-    svc.createRoom(opts).then((createdRoom) => {
-        // console.log('room created', room);
-    });
-    // delete a room
-    svc.deleteRoom('myroom').then(() => {
-        // console.log('room deleted');
-    });
-    res.send('ES6 is the Node way to go');
-});
-app.post('/token', (req, res) => {
+app.post('/api/token', (req, res) => {
     const { room, user } = req.body;
     if (!room || !user) {
         res.status(400).send('Enter valid room and user');
@@ -55,9 +27,10 @@ app.post('/token', (req, res) => {
     const at = new livekit_server_sdk_1.AccessToken(API_KEY, API_SECRET, { identity: user });
     at.addGrant({ roomJoin: true, room });
     const token = at.toJwt();
-    res.send({ token, url: 'ws://localhost:7880' });
+    const protocol = req.headers.origin && req.headers.origin.startsWith('https://') ? 'wss' : 'ws';
+    res.send({ token, url: `${protocol}://${req.headers['x-forwarded-host']}:7880` });
 });
-app.post('/room', () => {
+app.post('/api/room', () => {
     const livekitHost = 'http://localhost:5000';
     const svc = new livekit_server_sdk_1.RoomServiceClient(livekitHost, API_KEY, API_SECRET);
     // list rooms
@@ -79,7 +52,17 @@ app.post('/room', () => {
         // console.log('room deleted');
     });
 });
-app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}!`);
+expressWsInstance.app.ws('/websocket', (ws, req) => {
+    ws.on('message', (msg) => {
+        console.log(msg);
+    });
+    console.log('socket init websocket');
 });
+expressWsInstance.app.ws('/api/websocket', (ws, req) => {
+    ws.on('message', (msg) => {
+        console.log(msg);
+    });
+    console.log('socket init websocket');
+});
+app.listen(PORT, () => console.log(`App listening on port ${PORT}...`));
 //# sourceMappingURL=index.js.map
